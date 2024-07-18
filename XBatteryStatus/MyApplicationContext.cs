@@ -193,7 +193,7 @@ namespace XBatteryStatus
         {
             if (bluetoothRadio?.State == RadioState.On)
             {
-                List<BluetoothLEDevice> foundGamepads = new List<BluetoothLEDevice>();
+                List<BluetoothLEDevice> foundDevices = new List<BluetoothLEDevice>();
 
                 foreach (var device in await DeviceInformation.FindAllAsync())
                 {
@@ -201,15 +201,12 @@ namespace XBatteryStatus
                     {
                         BluetoothLEDevice bleDevice = await BluetoothLEDevice.FromIdAsync(device.Id);
 
-                        if (bleDevice?.Appearance.SubCategory == BluetoothLEAppearanceSubcategories.Gamepad)//get the gamepads
-                        {
-                            GattDeviceService service = bleDevice.GetGattService(new Guid("0000180f-0000-1000-8000-00805f9b34fb"));
-                            GattCharacteristic characteristic = service.GetCharacteristics(new Guid("00002a19-0000-1000-8000-00805f9b34fb")).First();
+                        GattDeviceService service = bleDevice.GetGattService(new Guid("0000180f-0000-1000-8000-00805f9b34fb"));
+                        GattCharacteristic characteristic = service.GetCharacteristics(new Guid("00002a19-0000-1000-8000-00805f9b34fb")).First();
 
-                            if (service != null && characteristic != null)//get the gamepads with battery status
-                            {
-                                foundGamepads.Add(bleDevice);
-                            }
+                        if (service != null && characteristic != null)
+                        {
+                            foundDevices.Add(bleDevice);
                         }
                     }
                     catch (Exception e)
